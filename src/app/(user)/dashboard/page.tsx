@@ -1,20 +1,10 @@
-import { redirect } from 'next/navigation'
-import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
+import React from 'react'
 
-export default async function DashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
-
-  if (!session) {
-    redirect('/sign-in')
-  }
-
+export default function DashboardPage() {
   return (
     <div>
       <h1>Dashboard</h1>
-      <p>Welcome, {session.user.name || session.user.email}!</p>
+      <p>Welcome to your dashboard!</p>
     </div>
   )
 }
