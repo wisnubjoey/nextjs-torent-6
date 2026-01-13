@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import AdminSidebar from "@/components/admin-sidebar";
 
 export default async function AdminLayout({
   children,
@@ -16,9 +17,5 @@ export default async function AdminLayout({
     redirect("/");
   }
 
-  return (
-    <div className="min-h-screen">
-      {children}
-    </div>
-  );
+  return <AdminSidebar>{children}</AdminSidebar>;
 }
