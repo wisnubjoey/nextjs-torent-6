@@ -1,0 +1,9 @@
+- [x] Create `src/db/image.ts` schema | dev | done | 1
+- [x] Export image schema in `src/db/schema.ts` | dev | done | 2
+- [x] Setup UploadThing components in `src/app/(admin)/admin/(management)/cars/page.tsx` | dev | done | 3
+- [x] Implement local state for image mapping (gallery) | dev | done | 4
+- [x] Add `sonner` notifications for upload success/error | dev | done | 5
+- [x] Style the gallery with Tailwind CSS (grid layout, hover effects) | dev | done | 6
+- [x] Add "Delete" functionality (UI only for now) | dev | done | 7
+- [ ] Generate and run database migration for images table | dev | todo | 8
+- [ ] Create API endpoint to persist images to database | dev | todo | 9
