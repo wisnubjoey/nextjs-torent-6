@@ -1,0 +1,18 @@
+- [ ] **Analyze Existing Schema**
+    - [ ] Read `db/schema.ts` for existing patterns.
+- [ ] **Define Base Tables**
+    - [ ] Update `db/schema.ts`: Add `brands` table (id, name, logo).
+    - [ ] Update `db/schema.ts`: Add `pricing_types` table (id, name).
+    - [ ] Update `db/schema.ts`: Add `products` table (id, model_name, image).
+- [ ] **Define Junction Tables**
+    - [ ] Add `product_brands` table linking `products.id` and `brands.id`.
+    - [ ] Add `product_prices` table linking `products.id` and `pricing_types.id` with a `price` column.
+- [ ] **Define Relations**
+    - [ ] Use `relations` helper from Drizzle to define One-to-Many / Many-to-Many connections in `db/schema.ts`.
+- [ ] **Generate & Apply Migrations**
+    - [ ] Run `npx drizzle-kit generate` to create SQL.
+    - [ ] Run `npx drizzle-kit migrate` to apply changes.
+- [ ] **Seed Initial Data**
+    - [ ] Create a seed script or manual entry to populate `pricing_types` with 'Daily', 'Weekly', 'Monthly'.
+- [ ] **Verify Types**
+    - [ ] Ensure TS types correctly reflect the nested structure (e.g., Product with array of Prices).
