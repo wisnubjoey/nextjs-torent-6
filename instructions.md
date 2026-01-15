@@ -1,38 +1,38 @@
-# Project: NextJS Torent - Product Schema Expansion (Junction Tables)
+# Project: NextJS Torent - Cart, Checkout & Order History
 
 ## Goal
-Implement a relational database structure for `products` using **Junction Tables** to link `brands` and `pricing` configurations. This allows for flexible brand associations and structured pricing tiers (Daily, Weekly, Monthly).
+Implement a complete rental checkout flow including a persistent Cart (Zustand), Order/History database schema, and User Dashboard for tracking rentals. Rentals are split between "My Rentals" (active) and "Order History" (completed/cancelled).
 
-## Vetted Dependencies
-- **drizzle-orm** (Existing) — Core ORM for defining relational schemas and junction tables.
-- **drizzle-kit** (Existing) — Migration management.
-- **zod** (Existing) — Validation for complex relational data inputs.
+## Logic: Active vs. History
+- **My Rentals (`/dashboard/my-rentals`)**: 
+  - Orders where `status` is 'confirmed' AND at least one item has `endDate >= now`.
+  - Orders where `status` is 'pending'.
+- **Order History (`/dashboard/orders`)**: 
+  - Orders where `status` is 'cancelled'.
+  - Orders where `status` is 'confirmed' AND all items have `endDate < now`.
+  - Orders where `status` is 'completed'.
 
-## Structure
-```
-/Users/Bjoey/Desktop/Dev/Working/nextjs-torent-6/
-├── db/
-│   ├── schema.ts         # Define tables: products, brands, pricing_types
-│   │                     # Define junctions: product_brands, product_prices
-│   └── index.ts          # Export relations
-├── drizzle/              # Migrations
-└── src/
-    └── types/            # Types including relation interfaces
-```
+## Schema Extensions
+- **`orders` table**:
+  - `id` (uuid, pk)
+  - `userId` (text, fk -> user.id)
+  - `status` (enum: pending, confirmed, cancelled, completed)
+  - `totalAmount` (double)
+  - `createdAt` (timestamp)
+- **`order_items` table**:
+  - `id` (uuid, pk)
+  - `orderId` (uuid, fk -> orders.id)
+  - `productId` (uuid, fk -> products.id)
+  - `pricingTypeId` (uuid, fk -> pricing_types.id)
+  - `quantity` (int)
+  - `priceSnapshot` (double) - Store rate at time of booking
+  - `startDate` (timestamp)
+  - `endDate` (timestamp)
 
-## Schema Design
-- **Tables**:
-  - `products` (id, model_name, image)
-  - `brands` (id, name, logo)
-  - `pricing_types` (id, name) — *Pre-seeded with: Daily, Weekly, Monthly*
-- **Junctions**:
-  - `product_brands` (product_id, brand_id)
-  - `product_prices` (product_id, pricing_type_id, price)
-
-## Security & Hygiene
-- **Referential Integrity**: Use Foreign Keys (`references`) in Drizzle to enforce relationships in junction tables.
-- **Composite Keys**: Use composite primary keys in junction tables (e.g., `[productId, brandId]`) to prevent duplicate links.
-- **Validation**: Ensure `price` in `product_prices` is a positive number.
+## Security
+- **Server-Side Validation**: Re-calculate totals on the backend using `product_prices` to prevent client-side price tampering.
+- **Auth Checks**: Ensure `userId` in orders matches the authenticated session.
+- **Transaction Support**: Use Drizzle `db.transaction()` to ensure `orders` and `order_items` are created atomically.
 
 ## Lint
 ```bash

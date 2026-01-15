@@ -1,5 +1,6 @@
 import { db } from "@/index";
 import { user } from "./auth-schema";
+import { pricingTypes } from "./product-schema";
 import { auth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 
@@ -7,6 +8,18 @@ async function seed() {
   console.log("🌱 Starting database seeding...");
 
   try {
+    // --- Seed Pricing Types ---
+    const types = ["Daily", "Weekly", "Monthly"];
+    for (const name of types) {
+      const existing = await db.select().from(pricingTypes).where(eq(pricingTypes.name, name)).limit(1);
+      if (existing.length === 0) {
+        await db.insert(pricingTypes).values({ name });
+        console.log(`✅ Pricing type created: ${name}`);
+      } else {
+        console.log(`ℹ️ Pricing type already exists: ${name}`);
+      }
+    }
+
     // --- Seed Regular User ---
     const userEmail = "user@example.com";
     const userPassword = "user123";

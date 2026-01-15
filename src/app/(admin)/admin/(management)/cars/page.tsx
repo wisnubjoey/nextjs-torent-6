@@ -3,68 +3,172 @@
 import { useState, useEffect } from 'react';
 import { UploadButton } from '@/lib/uploadthing';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from '@/components/ui/sheet';
 import { toast } from 'sonner';
-import { X, Image as ImageIcon } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, Image as ImageIcon } from 'lucide-react';
 
-type Image = {
-  id: string;
-  url: string;
+type Pricing = {
+  pricingTypeId: string;
+  price: number;
   name: string;
-  key: string;
+};
+
+type Car = {
+  id: string;
+  modelName: string;
+  image: string | null;
+  brandId: string | null;
+  brandName: string | null;
+  prices: Pricing[];
+};
+
+type Brand = {
+  id: string;
+  name: string;
+};
+
+type PricingType = {
+  id: string;
+  name: string;
 };
 
 export default function CarsPage() {
-  const [images, setImages] = useState<Image[]>([]);
+  const [cars, setCars] = useState<Car[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [pricingTypes, setPricingTypes] = useState<PricingType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingCar, setEditingCar] = useState<Car | null>(null);
+
+  // Form State
+  const [formData, setFormData] = useState<{
+    modelName: string;
+    image: string;
+    brandId: string;
+    prices: Record<string, string>; // pricingTypeId -> price value
+  }>({
+    modelName: '',
+    image: '',
+    brandId: '',
+    prices: {},
+  });
 
   useEffect(() => {
-    fetchImages();
+    fetchInitialData();
   }, []);
 
-  const fetchImages = async () => {
+  const fetchInitialData = async () => {
     try {
-      const response = await fetch('/api/images');
-      if (response.ok) {
-        const data = await response.json();
-        setImages(data);
-      }
+      const [carsRes, brandsRes, typesRes] = await Promise.all([
+        fetch('/api/cars'),
+        fetch('/api/brands'),
+        fetch('/api/pricing-types'),
+      ]);
+
+      if (carsRes.ok) setCars(await carsRes.json());
+      if (brandsRes.ok) setBrands(await brandsRes.json());
+      if (typesRes.ok) setPricingTypes(await typesRes.json());
     } catch (error) {
-      console.error('Error fetching images:', error);
-      toast.error('Failed to load images');
+      console.error('Error fetching data:', error);
+      toast.error('Failed to load initial data');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleOpenSheet = (car?: Car) => {
+    if (car) {
+      setEditingCar(car);
+      const pricesMap: Record<string, string> = {};
+      car.prices.forEach((p) => {
+        pricesMap[p.pricingTypeId] = p.price.toString();
+      });
+      setFormData({
+        modelName: car.modelName,
+        image: car.image || '',
+        brandId: car.brandId || '',
+        prices: pricesMap,
+      });
+    } else {
+      setEditingCar(null);
+      setFormData({ modelName: '', image: '', brandId: '', prices: {} });
+    }
+    setIsSheetOpen(true);
+  };
+
   const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this car?')) return;
+
     try {
-      const response = await fetch(`/api/images/${id}`, {
+      const response = await fetch(`/api/cars/${id}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
-        setImages((prev) => prev.filter((img) => img.id !== id));
-        toast.success('Image removed from gallery');
+        setCars((prev) => prev.filter((c) => c.id !== id));
+        toast.success('Car deleted successfully');
       } else {
-        toast.error('Failed to delete image');
+        toast.error('Failed to delete car');
       }
     } catch (error) {
-      console.error('Error deleting image:', error);
-      toast.error('Failed to delete image');
+      console.error('Error deleting car:', error);
+      toast.error('Failed to delete car');
     }
   };
 
-  const handleClearAll = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.modelName) {
+      toast.error('Model name is required');
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      const deletePromises = images.map((img) =>
-        fetch(`/api/images/${img.id}`, { method: 'DELETE' })
-      );
-      await Promise.all(deletePromises);
-      setImages([]);
-      toast.success('All images removed');
+      const url = editingCar ? `/api/cars/${editingCar.id}` : '/api/cars';
+      const method = editingCar ? 'PATCH' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const savedCar = await response.json();
+        if (editingCar) {
+          setCars((prev) => prev.map((c) => (c.id === savedCar.id ? savedCar : c)));
+          toast.success('Car updated successfully');
+        } else {
+          setCars((prev) => [savedCar, ...prev]);
+          toast.success('Car created successfully');
+        }
+        setIsSheetOpen(false);
+      } else {
+        toast.error('Failed to save car');
+      }
     } catch (error) {
-      console.error('Error clearing images:', error);
-      toast.error('Failed to clear images');
+      console.error('Error saving car:', error);
+      toast.error('Failed to save car');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -72,118 +176,208 @@ export default function CarsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Car Image Gallery</h1>
-          <p className="text-muted-foreground">Upload and manage car images</p>
+          <h1 className="text-3xl font-bold">Cars Management</h1>
+          <p className="text-muted-foreground">Manage your fleet of vehicles</p>
         </div>
+        <Button onClick={() => handleOpenSheet()}>
+          <Plus className="mr-2 h-4 w-4" /> Add New Car
+        </Button>
       </div>
 
-      <div className="rounded-lg border bg-card p-6">
-        <div className="flex flex-col items-center gap-4">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold">Upload Images</h2>
-            <p className="text-sm text-muted-foreground">
-              Max file size: 4MB per image
-            </p>
-          </div>
-
-          <UploadButton
-            endpoint="imageUploader"
-            onClientUploadComplete={async (res) => {
-              if (res && res.length > 0) {
-                try {
-                  const savePromises = res.map((file) =>
-                    fetch('/api/images', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({
-                        url: file.url,
-                        name: file.name,
-                        key: file.key,
-                      }),
-                    })
-                  );
-
-                  const responses = await Promise.all(savePromises);
-                  const savedImages = await Promise.all(
-                    responses.map((res) => res.json())
-                  );
-
-                  setImages((prev) => [...prev, ...savedImages]);
-                  toast.success(`Successfully uploaded ${savedImages.length} image(s)`);
-                } catch (error) {
-                  console.error('Error saving images:', error);
-                  toast.error('Failed to save images to database');
-                }
-              }
-            }}
-            onUploadError={(error: Error) => {
-              toast.error(`Upload failed: ${error.message}`);
-            }}
-            appearance={{
-              button: 'ut-uploading:cursor-not-allowed',
-              container: 'w-max flex flex-col items-center gap-4',
-              allowedContent: 'hidden',
-            }}
-          />
-        </div>
-      </div>
-
-      {isLoading ? (
-        <div className="flex items-center justify-center p-12">
-          <p className="text-muted-foreground">Loading images...</p>
-        </div>
-      ) : images.length > 0 ? (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">
-              Gallery ({images.length} images)
-            </h3>
-            <Button variant="destructive" size="sm" onClick={handleClearAll}>
-              Clear All
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {images.map((image) => (
-              <div
-                key={image.id}
-                className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
-              >
-                <img
-                  src={image.url}
-                  alt={image.name}
-                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                  <div className="flex h-full items-center justify-center">
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={() => handleDelete(image.id)}
-                      className="size-10"
-                    >
-                      <X className="size-4" />
-                    </Button>
+      <div className="rounded-md border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Image</TableHead>
+              <TableHead>Brand</TableHead>
+              <TableHead>Model Name</TableHead>
+              <TableHead>Prices</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-24 text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" /> Loading...
                   </div>
+                </TableCell>
+              </TableRow>
+            ) : cars.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                  No cars found. Add one to get started.
+                </TableCell>
+              </TableRow>
+            ) : (
+              cars.map((car) => (
+                <TableRow key={car.id}>
+                  <TableCell>
+                    {car.image ? (
+                      <div className="relative h-12 w-20 overflow-hidden rounded-md border bg-muted">
+                        <img
+                          src={car.image}
+                          alt={car.modelName}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex h-12 w-20 items-center justify-center rounded-md border bg-muted text-muted-foreground">
+                        <ImageIcon className="h-5 w-5" />
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>{car.brandName || '-'}</TableCell>
+                  <TableCell className="font-medium">{car.modelName}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1 text-xs">
+                      {car.prices.map((p) => (
+                        <span key={p.pricingTypeId}>
+                          {p.name}: ${p.price}
+                        </span>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleOpenSheet(car)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => handleDelete(car.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent className="overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>{editingCar ? 'Edit Car' : 'Add New Car'}</SheetTitle>
+          </SheetHeader>
+          <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+            
+            {/* Brand Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="brand">Brand</Label>
+              <select
+                id="brand"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={formData.brandId}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, brandId: e.target.value }))
+                }
+              >
+                <option value="">Select a Brand</option>
+                {brands.map((brand) => (
+                  <option key={brand.id} value={brand.id}>
+                    {brand.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="modelName">Model Name</Label>
+              <Input
+                id="modelName"
+                placeholder="e.g. Camry"
+                value={formData.modelName}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, modelName: e.target.value }))
+                }
+                required
+              />
+            </div>
+
+            {/* Pricing Inputs */}
+            <div className="space-y-4 rounded-md border p-4">
+              <h3 className="font-semibold text-sm">Pricing</h3>
+              {pricingTypes.map((type) => (
+                <div key={type.id} className="grid gap-2">
+                  <Label htmlFor={`price-${type.id}`}>{type.name} Price</Label>
+                  <Input
+                    id={`price-${type.id}`}
+                    type="number"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                    value={formData.prices[type.id] || ''}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        prices: { ...prev.prices, [type.id]: e.target.value },
+                      }))
+                    }
+                  />
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
-                  <p className="truncate text-xs text-white">{image.name}</p>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              <Label>Car Image</Label>
+              {formData.image ? (
+                <div className="relative aspect-video w-full overflow-hidden rounded-md border">
+                  <img
+                    src={formData.image}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute right-2 top-2 h-8 w-8"
+                    onClick={() => setFormData((prev) => ({ ...prev, image: '' }))}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-12 text-center">
-          <ImageIcon className="size-16 text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">No images uploaded yet</h3>
-          <p className="text-sm text-muted-foreground">
-            Upload your first car image using the button above
-          </p>
-        </div>
-      )}
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed p-4">
+                  <UploadButton
+                    endpoint="imageUploader"
+                    onClientUploadComplete={(res) => {
+                      if (res && res[0]) {
+                        setFormData((prev) => ({ ...prev, image: res[0].url }));
+                        toast.success('Image uploaded');
+                      }
+                    }}
+                    onUploadError={(error: Error) => {
+                      toast.error(`Upload failed: ${error.message}`);
+                    }}
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    Upload car image
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <SheetFooter>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {editingCar ? 'Save Changes' : 'Create Car'}
+              </Button>
+            </SheetFooter>
+          </form>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
