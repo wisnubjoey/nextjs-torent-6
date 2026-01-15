@@ -3,27 +3,28 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Car, Settings, ChevronLeft, ChevronRight, Users, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Car, Settings, ChevronLeft, ChevronRight, History, Key, ShoppingCart } from 'lucide-react';
 
 const menuGroups = [
   {
     title: 'Overview',
     items: [
-      { name: 'Dashboard', path: '/ngetest', icon: LayoutDashboard },
-      { name: 'Analytics', path: '/ngetest/analytics', icon: BarChart3 },
+      { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     ],
   },
   {
-    title: 'Management',
+    title: 'Rent a Vehicle',
     items: [
-      { name: 'Users', path: '/ngetest/users', icon: Users },
-      { name: 'Cars', path: '/ngetest/cars', icon: Car },
+      { name: 'Browse Vehicles', path: '/dashboard/browse-vehicles', icon: Car },
+      { name: 'Cart', path: '/cart', icon: ShoppingCart },
+      { name: 'My Rentals', path: '/dashboard/my-rentals', icon: Key },
+      { name: 'Order History', path: '/dashboard/orders', icon: History },
     ],
   },
   {
     title: 'Configuration',
     items: [
-      { name: 'Settings', path: '/ngetest/settings', icon: Settings },
+      { name: 'Settings', path: '/dashboard/settings', icon: Settings },
     ],
   },
 ];

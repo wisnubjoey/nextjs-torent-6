@@ -15,6 +15,20 @@
       "when": 1768349742159,
       "tag": "0001_overconfident_zzzax",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768438285569,
+      "tag": "0002_safe_ulik",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1768452156791,
+      "tag": "0003_jittery_deathstrike",
+      "breakpoints": true
     }
   ]
 }
