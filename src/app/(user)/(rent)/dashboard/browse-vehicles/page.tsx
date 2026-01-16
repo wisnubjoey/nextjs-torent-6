@@ -114,7 +114,7 @@ export default function BrowseVehiclesPage() {
             <h1 className="text-3xl font-bold tracking-tight">Browse Vehicles</h1>
             <p className="text-muted-foreground">Find the perfect car for your next journey.</p>
           </div>
-          <Link href="/cart" className="md:hidden">
+          <Link href="/dashboard/cart" className="md:hidden">
             <Button variant="outline" size="icon" className="relative">
               <ShoppingCart className="h-5 w-5" />
               {items.length > 0 && (
@@ -126,7 +126,7 @@ export default function BrowseVehiclesPage() {
           </Link>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
-          <Link href="/cart" className="hidden md:block">
+          <Link href="/dashboard/cart" className="hidden md:block">
             <Button variant="outline" className="relative gap-2">
               <ShoppingCart className="h-4 w-4" />
               Cart

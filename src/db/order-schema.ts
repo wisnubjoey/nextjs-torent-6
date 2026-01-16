@@ -1,14 +1,30 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, uuid, timestamp, doublePrecision, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, timestamp, doublePrecision, integer, pgEnum } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 import { products, pricingTypes } from "./product-schema";
+
+export enum OrderStatus {
+  Pending = "pending",
+  Confirmed = "confirmed",
+  Active = "active",
+  Cancelled = "cancelled",
+  Completed = "completed",
+}
+
+export const orderStatusEnum = pgEnum("order_status", [
+  OrderStatus.Pending,
+  OrderStatus.Confirmed,
+  OrderStatus.Active,
+  OrderStatus.Cancelled,
+  OrderStatus.Completed,
+]);
 
 export const orders = pgTable("orders", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  status: text("status").notNull().default("pending"), // 'pending', 'confirmed', 'cancelled', 'completed'
+  status: orderStatusEnum("status").notNull().default(OrderStatus.Pending),
   totalAmount: doublePrecision("total_amount").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")

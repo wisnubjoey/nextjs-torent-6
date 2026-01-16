@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Car, Settings, ChevronLeft, ChevronRight, Users, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Car, Settings, ChevronLeft, ChevronRight, Users, BarChart3, List, History } from 'lucide-react';
 
 const menuGroups = [
   {
@@ -18,6 +18,13 @@ const menuGroups = [
     items: [
       { name: 'Users', path: '/admin/users', icon: Users },
       { name: 'Cars', path: '/admin/cars', icon: Car },
+    ],
+  },
+  {
+    title: 'Rentals',
+    items: [
+      { name: 'Active', path: '/admin/rentals/active', icon: List },
+      { name: 'History', path: '/admin/rentals/history', icon: History },
     ],
   },
   {
