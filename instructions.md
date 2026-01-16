@@ -1,38 +1,35 @@
-# Project: NextJS Torent - Cart, Checkout & Order History
-
+# Project: Admin Rental Management
 ## Goal
-Implement a complete rental checkout flow including a persistent Cart (Zustand), Order/History database schema, and User Dashboard for tracking rentals. Rentals are split between "My Rentals" (active) and "Order History" (completed/cancelled).
+Implement a dedicated rental management section in the admin dashboard to track "Active" (confirmed) and "History" (completed/cancelled) rentals, including sidebar navigation.
 
-## Logic: Active vs. History
-- **My Rentals (`/dashboard/my-rentals`)**: 
-  - Orders where `status` is 'confirmed' AND at least one item has `endDate >= now`.
-  - Orders where `status` is 'pending'.
-- **Order History (`/dashboard/orders`)**: 
-  - Orders where `status` is 'cancelled'.
-  - Orders where `status` is 'confirmed' AND all items have `endDate < now`.
-  - Orders where `status` is 'completed'.
+## Logic: Admin View
+- **Active Rentals**: Orders where `status` is 'confirmed'.
+- **Rental History**: Orders where `status` is 'completed' or 'cancelled'.
+- **Pending Approvals**: (Optional/Future) Orders where `status` is 'pending'.
 
-## Schema Extensions
-- **`orders` table**:
-  - `id` (uuid, pk)
-  - `userId` (text, fk -> user.id)
-  - `status` (enum: pending, confirmed, cancelled, completed)
-  - `totalAmount` (double)
-  - `createdAt` (timestamp)
-- **`order_items` table**:
-  - `id` (uuid, pk)
-  - `orderId` (uuid, fk -> orders.id)
-  - `productId` (uuid, fk -> products.id)
-  - `pricingTypeId` (uuid, fk -> pricing_types.id)
-  - `quantity` (int)
-  - `priceSnapshot` (double) - Store rate at time of booking
-  - `startDate` (timestamp)
-  - `endDate` (timestamp)
+## Vetted Dependencies
+- lucide-react @latest — For sidebar icons (List, Clock, Car).
+
+## Structure
+```
+.
+└── src/
+    ├── app/
+    │   └── (admin)/
+    │       └── admin/
+    │           └── (management)/
+    │               └── rentals/
+    │                   ├── active/
+    │                   │   └── page.tsx
+    │                   └── history/
+    │                       └── page.tsx
+    └── components/
+        └── admin-sidebar.tsx
+```
 
 ## Security
-- **Server-Side Validation**: Re-calculate totals on the backend using `product_prices` to prevent client-side price tampering.
-- **Auth Checks**: Ensure `userId` in orders matches the authenticated session.
-- **Transaction Support**: Use Drizzle `db.transaction()` to ensure `orders` and `order_items` are created atomically.
+- **Admin Middleware**: Ensure all routes under `admin/*` verify the user's role is 'admin' via `auth.ts`.
+- **Data Integrity**: Use `ordersRelations` to fetch user details (name, email) and joined `order_items` for car model names.
 
 ## Lint
 ```bash

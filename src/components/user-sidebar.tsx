@@ -16,7 +16,7 @@ const menuGroups = [
     title: 'Rent a Vehicle',
     items: [
       { name: 'Browse Vehicles', path: '/dashboard/browse-vehicles', icon: Car },
-      { name: 'Cart', path: '/cart', icon: ShoppingCart },
+      { name: 'Cart', path: '/dashboard/cart', icon: ShoppingCart },
       { name: 'My Rentals', path: '/dashboard/my-rentals', icon: Key },
       { name: 'Order History', path: '/dashboard/orders', icon: History },
     ],

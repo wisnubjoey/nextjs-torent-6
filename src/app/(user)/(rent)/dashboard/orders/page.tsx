@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, History } from "lucide-react"
+import { OrderStatus } from "@/db/schema"
 
 interface OrderItem {
   id: string
@@ -31,7 +32,7 @@ interface OrderItem {
 
 interface Order {
   id: string
-  status: "pending" | "confirmed" | "cancelled" | "completed"
+  status: OrderStatus
   totalAmount: number
   createdAt: string
   items: OrderItem[]
@@ -53,8 +54,8 @@ export default function OrderHistoryPage() {
           // 2. Confirmed orders where ALL items' endDate is in the past
           const now = new Date()
           const historyOrders = data.orders.filter((order: Order) => {
-            if (order.status === "cancelled" || order.status === "completed") return true
-            if (order.status === "confirmed") {
+            if (order.status === OrderStatus.Cancelled || order.status === OrderStatus.Completed) return true
+            if (order.status === OrderStatus.Confirmed) {
               return order.items.every(item => isBefore(new Date(item.endDate), now))
             }
             return false

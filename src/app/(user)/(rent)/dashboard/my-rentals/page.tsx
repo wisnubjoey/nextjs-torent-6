@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, Key, Calendar } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { OrderStatus } from "@/db/schema"
 
 interface OrderItem {
   id: string
@@ -33,7 +34,7 @@ interface OrderItem {
 
 interface Order {
   id: string
-  status: "pending" | "confirmed" | "cancelled" | "completed"
+  status: OrderStatus
   totalAmount: number
   createdAt: string
   items: OrderItem[]
@@ -55,8 +56,8 @@ export default function MyRentalsPage() {
           // 2. Confirmed orders where at least one item's endDate is in the future
           const now = new Date()
           const activeOrders = data.orders.filter((order: Order) => {
-            if (order.status === "pending") return true
-            if (order.status === "confirmed") {
+            if (order.status === OrderStatus.Pending) return true
+            if (order.status === OrderStatus.Confirmed) {
               return order.items.some(item => isAfter(new Date(item.endDate), now))
             }
             return false

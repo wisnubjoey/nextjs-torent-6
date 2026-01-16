@@ -1,26 +1,6 @@
-- [x] **Dependencies**
-    - [x] `npm install zustand date-fns`
-- [x] **Database Schema**
-    - [x] Create `src/db/order-schema.ts`: Define `orders` and `order_items`.
-    - [x] Update `src/db/schema.ts`: Export new tables.
-    - [x] Run `npx drizzle-kit generate` and `npx drizzle-kit migrate`.
-- [x] **State Management (Cart)**
-    - [x] Create `src/types/cart.ts`: Define `CartItem` (product, dates, pricing).
-    - [x] Create `src/lib/stores/cart-store.ts`: Zustand store with `persist` middleware.
-    - [x] Add actions: `addItem`, `removeItem`, `clearCart`.
-- [x] **Backend API**
-    - [x] Create `src/app/api/orders/route.ts`:
-        - [x] `POST`: Validate body, calc total from DB prices, insert order + items in transaction.
-        - [x] `GET`: Fetch orders for current user with joined items/products.
-- [x] **UI - Cart & Checkout**
-    - [x] Create `src/components/cart-drawer.tsx` (optional) or link to Cart page.
-    - [x] Create `src/app/(user)/(rent)/cart/page.tsx`: List items, date summary, total, "Checkout" button.
-    - [x] Integrate `useCart` hook in `Browse Vehicles` page (Add to Cart button).
-- [x] **UI - Rentals Management**
-    - [x] Create `src/app/(user)/(rent)/dashboard/my-rentals/page.tsx`: Show active rentals (`endDate >= now` and confirmed/pending).
-    - [x] Update `src/app/(user)/(rent)/dashboard/orders/page.tsx`: Show completed/cancelled orders only.
-    - [x] Update Backend API or Frontend logic to filter orders by active status.
-- [ ] **Validation**
-    - [ ] Test checkout flow: Add item -> Checkout -> Verify DB entry.
-    - [ ] Verify "My Rentals" shows active bookings.
-    - [ ] Verify "Order History" shows past bookings.
+- [ ] Add "Rentals" section to `src/components/admin-sidebar.tsx` with links to Active and History
+- [ ] Create `src/app/(admin)/admin/(management)/rentals/active/page.tsx`
+- [ ] Implement data fetching for active rentals joining `orders`, `user`, and `order_items`
+- [ ] Create `src/app/(admin)/admin/(management)/rentals/history/page.tsx`
+- [ ] Implement data fetching for history rentals (cancelled/completed)
+- [ ] Add status update actions (e.g., "Mark as Completed") to the Active rentals table

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { db } from "@/index";
-import { orders, orderItems, productPrices } from "@/db/schema";
+import { orders, orderItems, productPrices, OrderStatus } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     // Validate items and calculate total from DB
     let totalAmount = 0;
-    const orderItemsData = [];
+    const orderItemsData: { productId: string; pricingTypeId: string; quantity: number; priceSnapshot: number; startDate: Date; endDate: Date; }[] = [];
 
     // Use a transaction to ensure integrity
     const result = await db.transaction(async (tx) => {
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         .values({
           userId: session.user.id,
           totalAmount: totalAmount,
-          status: "pending",
+          status: OrderStatus.Pending,
         })
         .returning();
 
