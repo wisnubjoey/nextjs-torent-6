@@ -1,6 +1,7 @@
-- [ ] Add "Rentals" section to `src/components/admin-sidebar.tsx` with links to Active and History
-- [ ] Create `src/app/(admin)/admin/(management)/rentals/active/page.tsx`
-- [ ] Implement data fetching for active rentals joining `orders`, `user`, and `order_items`
-- [ ] Create `src/app/(admin)/admin/(management)/rentals/history/page.tsx`
-- [ ] Implement data fetching for history rentals (cancelled/completed)
-- [ ] Add status update actions (e.g., "Mark as Completed") to the Active rentals table
+- [ ] Update `get-pending-rentals.ts` to include `Confirmed` orders
+- [ ] Update `actions.ts` to handle `Pending` -> `Confirmed`, `Confirmed` -> `Active`, and `Pending` -> `Cancelled`
+- [ ] Update `columns.tsx` to show dynamic buttons (Accept/Cancel for Pending, Activate for Confirmed)
+- [ ] Update `my-rentals/page.tsx` to display Confirmed orders and handle new Start Date logic
+- [ ] Verify Admin flow: Pending -> Confirmed -> Active
+- [ ] Verify Admin flow: Pending -> Cancelled
+- [ ] Verify User flow: View status changes

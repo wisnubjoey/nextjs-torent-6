@@ -55,7 +55,7 @@ export default function OrderHistoryPage() {
           const now = new Date()
           const historyOrders = data.orders.filter((order: Order) => {
             if (order.status === OrderStatus.Cancelled || order.status === OrderStatus.Completed) return true
-            if (order.status === OrderStatus.Confirmed) {
+            if (order.status === OrderStatus.Active) {
               return order.items.every(item => isBefore(new Date(item.endDate), now))
             }
             return false
@@ -119,8 +119,8 @@ export default function OrderHistoryPage() {
                 </span>
                 <Badge 
                   variant={
-                    order.status === "confirmed" || order.status === "completed" ? "default" : 
-                    order.status === "cancelled" ? "destructive" : "secondary"
+                    order.status === OrderStatus.Completed || order.status === OrderStatus.Cancelled ? "default" : 
+                    order.status === OrderStatus.Active ? "destructive" : "secondary"
                   }
                   className="capitalize"
                 >

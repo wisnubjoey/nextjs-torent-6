@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Car, Settings, ChevronLeft, ChevronRight, Users, BarChart3, List, History } from 'lucide-react';
+import { LayoutDashboard, Car, Settings, ChevronLeft, ChevronRight, Users, BarChart3, List, History, Clock } from 'lucide-react';
 
 const menuGroups = [
   {
@@ -23,6 +23,7 @@ const menuGroups = [
   {
     title: 'Rentals',
     items: [
+      { name: 'Pending', path: '/admin/rentals/pending', icon: Clock },
       { name: 'Active', path: '/admin/rentals/active', icon: List },
       { name: 'History', path: '/admin/rentals/history', icon: History },
     ],
