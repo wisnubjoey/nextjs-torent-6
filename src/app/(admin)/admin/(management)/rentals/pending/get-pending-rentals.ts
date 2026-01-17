@@ -2,9 +2,9 @@ import { db } from "@/index"
 import { orders, OrderStatus } from "@/db/schema"
 import { eq } from "drizzle-orm"
 
-export async function getActiveRentals() {
-  const activeRentals = await db.query.orders.findMany({
-    where: eq(orders.status, OrderStatus.Active),
+export async function getPendingRentals() {
+  const pendingRentals = await db.query.orders.findMany({
+    where: eq(orders.status, OrderStatus.Pending),
     with: {
       user: true,
       items: {
@@ -16,5 +16,5 @@ export async function getActiveRentals() {
     },
     orderBy: (orders, { desc }) => [desc(orders.createdAt)]
   })
-  return activeRentals
+  return pendingRentals
 }

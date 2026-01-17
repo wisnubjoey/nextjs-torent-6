@@ -57,7 +57,7 @@ export default function MyRentalsPage() {
           const now = new Date()
           const activeOrders = data.orders.filter((order: Order) => {
             if (order.status === OrderStatus.Pending) return true
-            if (order.status === OrderStatus.Confirmed) {
+            if (order.status === OrderStatus.Active) {
               return order.items.some(item => isAfter(new Date(item.endDate), now))
             }
             return false
@@ -124,7 +124,7 @@ export default function MyRentalsPage() {
               </div>
               <div className="flex items-center gap-4">
                 <Badge 
-                  variant={order.status === "confirmed" ? "default" : "secondary"}
+                  variant={order.status === OrderStatus.Active ? "default" : "secondary"}
                   className="capitalize"
                 >
                   {order.status}
@@ -157,7 +157,9 @@ export default function MyRentalsPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          {isActive ? (
+                          {order.status === OrderStatus.Pending ? (
+                            <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20 border-yellow-200">Pending</Badge>
+                          ) : isActive ? (
                             <Badge variant="default" className="bg-green-600 hover:bg-green-700">Currently Active</Badge>
                           ) : isUpcoming ? (
                             <Badge variant="outline" className="text-blue-600 border-blue-600">Upcoming</Badge>
