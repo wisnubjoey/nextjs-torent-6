@@ -55,14 +55,11 @@ export default function MyRentalsPage() {
           // Filter logic for "My Rentals":
           // 1. Pending orders
           // 2. Confirmed orders
-          // 3. Active orders where at least one item's endDate is in the future
-          const now = new Date()
+          // 3. Active orders
           const activeOrders = data.orders.filter((order: Order) => {
             if (order.status === OrderStatus.Pending) return true
             if (order.status === OrderStatus.Confirmed) return true
-            if (order.status === OrderStatus.Active) {
-              return order.items.some(item => isAfter(new Date(item.endDate), now))
-            }
+            if (order.status === OrderStatus.Active) return true
             return false
           })
           
