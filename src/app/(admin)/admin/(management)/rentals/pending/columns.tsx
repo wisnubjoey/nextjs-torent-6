@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { OrderStatus } from "@/db/schema"
+import { formatCurrency } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import { acceptOrder, activateOrder, cancelOrder } from "./actions"
@@ -77,11 +78,7 @@ export const columns: ColumnDef<PendingRental>[] = [
     header: "Total",
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("totalAmount"))
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
-      return <div className="font-medium">{formatted}</div>
+      return <div className="font-medium">{formatCurrency(amount)}</div>
     },
   },
   {

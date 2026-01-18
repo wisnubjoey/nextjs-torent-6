@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { format, isAfter } from "date-fns"
+import { formatCurrency } from "@/lib/utils"
 import {
   Table,
   TableBody,
@@ -178,7 +179,7 @@ export default function MyRentalsPage() {
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          ${item.priceSnapshot.toLocaleString()}
+                          {formatCurrency(item.priceSnapshot)}
                         </TableCell>
                       </TableRow>
                     )

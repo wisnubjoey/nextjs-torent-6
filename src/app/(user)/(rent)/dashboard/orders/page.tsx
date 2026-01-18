@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { format, isBefore } from "date-fns"
+import { formatCurrency } from "@/lib/utils"
 import {
   Table,
   TableBody,
@@ -115,7 +116,7 @@ export default function OrderHistoryPage() {
               </div>
               <div className="flex items-center gap-4">
                 <span className="font-bold text-lg">
-                  ${order.totalAmount.toLocaleString()}
+                  {formatCurrency(order.totalAmount)}
                 </span>
                 <Badge 
                   variant={
@@ -155,7 +156,7 @@ export default function OrderHistoryPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        ${item.priceSnapshot.toLocaleString()}
+                        {formatCurrency(item.priceSnapshot)}
                       </TableCell>
                     </TableRow>
                   ))}
