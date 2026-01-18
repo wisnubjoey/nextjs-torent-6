@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { UploadButton } from '@/lib/uploadthing';
+import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -234,7 +235,7 @@ export default function CarsPage() {
                     <div className="flex flex-col gap-1 text-xs">
                       {car.prices.map((p) => (
                         <span key={p.pricingTypeId}>
-                          {p.name}: ${p.price}
+                          {p.name}: {formatCurrency(p.price)}
                         </span>
                       ))}
                     </div>
@@ -314,9 +315,9 @@ export default function CarsPage() {
                   <Input
                     id={`price-${type.id}`}
                     type="number"
-                    placeholder="0.00"
+                    placeholder="0"
                     min="0"
-                    step="0.01"
+                    step="1"
                     value={formData.prices[type.id] || ''}
                     onChange={(e) =>
                       setFormData((prev) => ({

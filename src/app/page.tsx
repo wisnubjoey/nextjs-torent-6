@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { formatCurrency } from "@/lib/utils"
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -223,7 +224,7 @@ export default function Home() {
                         <CardDescription>{car.type}</CardDescription>
                       </div>
                       <div className="font-bold text-primary">
-                        ${car.price}
+                        {formatCurrency(car.price)}
                         <span className="text-xs font-normal text-muted-foreground">
                           /day
                         </span>

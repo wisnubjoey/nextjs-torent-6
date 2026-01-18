@@ -46,7 +46,7 @@ export default function UserSidebar({
       >
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           {!isCollapsed && (
-            <h1 className="font-bold text-xl text-gray-800">User</h1>
+            <h1 className="font-bold text-xl text-gray-800">Torent</h1>
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}

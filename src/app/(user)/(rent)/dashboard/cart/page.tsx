@@ -2,6 +2,7 @@
 
 import { useCart } from "@/lib/stores/cart-store"
 import { Button } from "@/components/ui/button"
+import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { format } from "date-fns"
 import { Trash2, ShoppingCart, Calendar, Tag } from "lucide-react"
@@ -115,7 +116,7 @@ export default function CartPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mt-4">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Tag className="h-4 w-4" />
-                      <span>{item.pricingTypeName} Rate: ${item.price.toLocaleString()}</span>
+                      <span>{item.pricingTypeName} Rate: {formatCurrency(item.price)}</span>
                     </div>
                     
                     <div className="flex items-center gap-2 text-muted-foreground">
@@ -148,12 +149,12 @@ export default function CartPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">Subtotal ({items.length} items)</span>
-                <span className="font-medium">${total().toLocaleString()}</span>
+                <span className="font-medium">{formatCurrency(total())}</span>
               </div>
               <Separator />
               <div className="flex justify-between items-center text-lg font-bold">
                 <span>Total</span>
-                <span>${total().toLocaleString()}</span>
+                <span>{formatCurrency(total())}</span>
               </div>
             </CardContent>
             <CardFooter className="flex-col gap-3">

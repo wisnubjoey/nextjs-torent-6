@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Search, Car, Filter, Loader2, Info, ShoppingCart } from "lucide-react"
 import Image from "next/image"
@@ -218,7 +219,7 @@ export default function BrowseVehiclesPage() {
                         <div key={price.pricingTypeId} className="flex flex-col bg-muted/50 rounded-md p-2 min-w-[80px]">
                           <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">{price.name}</span>
                           <span className="text-lg font-bold">
-                            ${price.price.toLocaleString()}
+                            {formatCurrency(price.price)}
                           </span>
                         </div>
                       ))}
