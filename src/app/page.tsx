@@ -1,6 +1,5 @@
-import Link from "next/link";
 import Image from "next/image";
-import { formatCurrency } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,13 +14,14 @@ import {
   Search,
   MapPin,
   Calendar,
-  Car,
   Shield,
   Zap,
   Star,
   Users,
   Fuel,
 } from "lucide-react";
+import Navbar from "@/components/navbar";
+import { Footer } from "@/components/footer";
 
 export default function Home() {
   const popularCars = [
@@ -69,50 +69,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
-      {/* Header */}
-      <header className="border-b sticky top-0 bg-background/95 backdrop-blur z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <Car className="h-6 w-6 text-primary" />
-            <span>RentWheels</span>
-          </Link>
-
-          <nav className="hidden md:flex gap-6 text-sm font-medium">
-            <Link href="#" className="hover:text-primary transition-colors">
-              Home
-            </Link>
-            <Link href="#" className="hover:text-primary transition-colors">
-              Fleet
-            </Link>
-            <Link href="#" className="hover:text-primary transition-colors">
-              Services
-            </Link>
-            <Link href="#" className="hover:text-primary transition-colors">
-              Contact
-            </Link>
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <Link href="/sign-in">
-              <Button variant="ghost" size="sm">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/sign-up">
-              <Button size="sm">Sign Up</Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
+      <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative py-20 lg:py-32 bg-muted/30 overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-2xl">
               <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6">
-                Find Your <span className="text-primary">Best Drive</span> For
-                The Weekend
+                Find Your <span className="text-primary">Best Drive</span> For The
+                Weekend
               </h1>
               <p className="text-lg text-muted-foreground mb-8">
                 Experience the ultimate freedom of choice with our premium car
@@ -127,14 +92,20 @@ export default function Home() {
                     <MapPin className="h-4 w-4" />
                     Location
                   </div>
-                  <Input placeholder="City, Airport, or Address" className="border-0 shadow-none px-0 focus-visible:ring-0 text-base" />
+                  <Input
+                    placeholder="City, Airport, or Address"
+                    className="border-0 shadow-none px-0 focus-visible:ring-0 text-base"
+                  />
                 </div>
                 <div className="space-y-2 border-l pl-4 hidden md:block">
                   <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                     <Calendar className="h-4 w-4" />
                     Date
                   </div>
-                  <Input type="date" className="border-0 shadow-none px-0 focus-visible:ring-0 text-base" />
+                  <Input
+                    type="date"
+                    className="border-0 shadow-none px-0 focus-visible:ring-0 text-base"
+                  />
                 </div>
                 <Button size="lg" className="h-full w-full md:w-auto">
                   <Search className="mr-2 h-4 w-4" /> Search Car
@@ -142,7 +113,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
+
           {/* Decorative background element */}
           <div className="absolute top-0 right-0 h-full w-1/2 bg-gradient-to-l from-primary/10 to-transparent hidden lg:block" />
         </section>
@@ -208,7 +179,10 @@ export default function Home() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {popularCars.map((car) => (
-                <Card key={car.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <Card
+                  key={car.id}
+                  className="overflow-hidden hover:shadow-lg transition-shadow"
+                >
                   <div className="relative h-48 w-full bg-muted">
                     <Image
                       src={car.image}
@@ -270,60 +244,18 @@ export default function Home() {
               <Button size="lg" variant="secondary">
                 Book a Car
               </Button>
-              <Button size="lg" variant="outline" className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+              >
                 Contact Us
               </Button>
             </div>
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-muted py-12 text-sm">
-        <div className="container mx-auto px-4 grid md:grid-cols-4 gap-8">
-          <div>
-            <div className="flex items-center gap-2 font-bold text-lg mb-4">
-              <Car className="h-5 w-5" />
-              RentWheels
-            </div>
-            <p className="text-muted-foreground">
-              Providing top-quality car rental services for travelers and locals
-              alike. Your journey starts here.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4">Company</h4>
-            <ul className="space-y-2 text-muted-foreground">
-              <li><Link href="#" className="hover:text-primary">About Us</Link></li>
-              <li><Link href="#" className="hover:text-primary">Careers</Link></li>
-              <li><Link href="#" className="hover:text-primary">Blog</Link></li>
-              <li><Link href="#" className="hover:text-primary">Terms & Conditions</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4">Support</h4>
-            <ul className="space-y-2 text-muted-foreground">
-              <li><Link href="#" className="hover:text-primary">Help Center</Link></li>
-              <li><Link href="#" className="hover:text-primary">FAQs</Link></li>
-              <li><Link href="#" className="hover:text-primary">Contact Support</Link></li>
-              <li><Link href="#" className="hover:text-primary">Privacy Policy</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4">Newsletter</h4>
-            <p className="text-muted-foreground mb-4">
-              Subscribe to get the latest offers and updates.
-            </p>
-            <div className="flex gap-2">
-              <Input placeholder="Email address" className="bg-background" />
-              <Button>Subscribe</Button>
-            </div>
-          </div>
-        </div>
-        <div className="container mx-auto px-4 mt-12 pt-8 border-t text-center text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} RentWheels. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

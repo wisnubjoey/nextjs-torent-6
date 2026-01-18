@@ -1,8 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@uploadthing/react/styles.css";
-
-@source "../../node_modules/@uploadthing/react";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -140,5 +137,26 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  width: 100%;
+  @media (width >= 640px) {
+    max-width: 640px;
+  }
+  @media (width >= 768px) {
+    max-width: 768px;
+  }
+  @media (width >= 1024px) {
+    max-width: 1024px;
+  }
+  @media (width >= 1280px) {
+    max-width: 1280px;
+  }
+  @media (width >= 1536px) {
+    max-width: 1536px;
   }
 }
