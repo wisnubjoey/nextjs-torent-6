@@ -26,6 +26,7 @@ interface Vehicle {
   brandId: string | null
   brandName: string | null
   prices: Price[]
+  isAvailable: boolean
 }
 
 interface Brand {
@@ -202,7 +203,12 @@ export default function BrowseVehiclesPage() {
                     <Car className="h-12 w-12 text-muted-foreground/40" />
                   </div>
                 )}
-                <div className="absolute top-2 right-2">
+                <div className="absolute top-2 right-2 flex gap-2">
+                  {!vehicle.isAvailable && (
+                    <span className="bg-destructive/90 text-destructive-foreground backdrop-blur-sm text-[10px] font-bold px-2 py-1 rounded border border-destructive/20 uppercase tracking-wider shadow-sm">
+                      Rented
+                    </span>
+                  )}
                   <span className="bg-background/80 backdrop-blur-sm text-[10px] font-bold px-2 py-1 rounded border border-muted-foreground/20 uppercase tracking-wider shadow-sm">
                     {vehicle.brandName || "Unknown"}
                   </span>
@@ -236,9 +242,9 @@ export default function BrowseVehiclesPage() {
                 <Button 
                   className="w-full font-semibold group-hover:bg-primary/90 transition-colors"
                   onClick={() => vehicle.prices.length > 0 && handleAddToCart(vehicle, vehicle.prices[0])}
-                  disabled={vehicle.prices.length === 0}
+                  disabled={vehicle.prices.length === 0 || !vehicle.isAvailable}
                 >
-                  {vehicle.prices.length > 0 ? "Add to Cart" : "Unavailable"}
+                  {!vehicle.isAvailable ? "Currently Rented" : vehicle.prices.length > 0 ? "Add to Cart" : "Unavailable"}
                 </Button>
               </CardFooter>
             </Card>

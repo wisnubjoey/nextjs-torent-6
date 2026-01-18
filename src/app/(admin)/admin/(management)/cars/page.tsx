@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { UploadButton } from '@/lib/uploadthing';
 import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -180,9 +181,14 @@ export default function CarsPage() {
           <h1 className="text-3xl font-bold">Cars Management</h1>
           <p className="text-muted-foreground">Manage your fleet of vehicles</p>
         </div>
-        <Button onClick={() => handleOpenSheet()}>
-          <Plus className="mr-2 h-4 w-4" /> Add New Car
-        </Button>
+        <div className="flex gap-2">
+          <Link href="/admin/brands">
+            <Button variant="outline">Manage Brands</Button>
+          </Link>
+          <Button onClick={() => handleOpenSheet()}>
+            <Plus className="mr-2 h-4 w-4" /> Add New Car
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-md border bg-card">
@@ -353,6 +359,25 @@ export default function CarsPage() {
                 <div className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed p-4">
                   <UploadButton
                     endpoint="imageUploader"
+                    appearance={{
+                      button:
+                        "ut-ready:bg-blue-600 ut-uploading:cursor-not-allowed rounded-md bg-blue-600 text-white hover:bg-blue-700 h-10 px-4 py-2 w-full transition-all duration-200 ease-in-out text-sm font-medium shadow-sm",
+                      container: "w-full max-w-[200px] mx-auto",
+                      allowedContent: "text-xs text-muted-foreground mt-1",
+                    }}
+                    content={{
+                      button: ({ ready, isUploading, uploadProgress }) => {
+                        if (isUploading)
+                          return (
+                            <div className="flex items-center gap-2">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span>{uploadProgress}%</span>
+                            </div>
+                          );
+                        return ready ? "Choose Image" : "Loading...";
+                      },
+                      allowedContent: "Max 32MB",
+                    }}
                     onClientUploadComplete={(res) => {
                       if (res && res[0]) {
                         setFormData((prev) => ({ ...prev, image: res[0].url }));

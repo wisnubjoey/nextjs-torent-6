@@ -1,9 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useSession } from '@/lib/auth-client';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { data: session } = useSession();
 
   return (
     <nav className="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur border-b border-black/10">
@@ -22,12 +24,20 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/sign-in" className="text-sm font-medium text-zinc-700 hover:text-black">
-            Sign in
-          </Link>
-          <Link href="/sign-up" className="text-sm font-medium bg-black text-white px-4 py-2 rounded-md hover:bg-black/80 transition-colors">
-            Sign up
-          </Link>
+          {session ? (
+            <Link href="/dashboard" className="text-sm font-medium bg-black text-white px-4 py-2 rounded-md hover:bg-black/80 transition-colors">
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/sign-in" className="text-sm font-medium text-zinc-700 hover:text-black">
+                Sign in
+              </Link>
+              <Link href="/sign-up" className="text-sm font-medium bg-black text-white px-4 py-2 rounded-md hover:bg-black/80 transition-colors">
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -69,20 +79,32 @@ export default function Navbar() {
               Contact Us
             </Link>
             <div className="h-px bg-black/5 my-1" />
-            <Link
-              href="/sign-in"
-              className="text-base font-medium text-zinc-800 hover:text-black"
-              onClick={() => setOpen(false)}
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/sign-up"
-              className="text-base font-medium text-zinc-800 hover:text-black"
-              onClick={() => setOpen(false)}
-            >
-              Sign up
-            </Link>
+            {session ? (
+              <Link
+                href="/dashboard"
+                className="text-base font-medium text-zinc-800 hover:text-black"
+                onClick={() => setOpen(false)}
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="text-base font-medium text-zinc-800 hover:text-black"
+                  onClick={() => setOpen(false)}
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="text-base font-medium text-zinc-800 hover:text-black"
+                  onClick={() => setOpen(false)}
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
         
           </div>
         </div>

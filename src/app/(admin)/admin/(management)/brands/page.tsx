@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { UploadButton } from '@/lib/uploadthing';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -138,9 +139,14 @@ export default function BrandsPage() {
           <h1 className="text-3xl font-bold">Brands Management</h1>
           <p className="text-muted-foreground">Manage car brands</p>
         </div>
-        <Button onClick={() => handleOpenSheet()}>
-          <Plus className="mr-2 h-4 w-4" /> Add New Brand
-        </Button>
+        <div className="flex gap-2">
+          <Link href="/admin/cars">
+            <Button variant="outline">Manage Cars</Button>
+          </Link>
+          <Button onClick={() => handleOpenSheet()}>
+            <Plus className="mr-2 h-4 w-4" /> Add New Brand
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-md border bg-card">

@@ -1,10 +1,26 @@
 import { db } from "@/index";
-import { products, productBrands, productPrices } from "@/db/schema";
+import { products, productBrands, productPrices, orders, orderItems, OrderStatus } from "@/db/schema";
 import { NextResponse } from "next/server";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, and, lte, gte, inArray } from "drizzle-orm";
 
 export async function GET() {
   try {
+    const now = new Date();
+
+    const activeRentals = await db
+      .select({ productId: orderItems.productId })
+      .from(orderItems)
+      .innerJoin(orders, eq(orders.id, orderItems.orderId))
+      .where(
+        and(
+          inArray(orders.status, [OrderStatus.Confirmed, OrderStatus.Active]),
+          lte(orderItems.startDate, now),
+          gte(orderItems.endDate, now)
+        )
+      );
+
+    const unavailableProductIds = new Set(activeRentals.map((r) => r.productId));
+
     const cars = await db.query.products.findMany({
       with: {
         productBrands: {
@@ -33,6 +49,7 @@ export async function GET() {
         price: pp.price,
         name: pp.pricingType.name,
       })),
+      isAvailable: !unavailableProductIds.has(car.id),
     }));
 
     return NextResponse.json(formattedCars);
