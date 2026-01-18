@@ -5,9 +5,9 @@ import { Badge } from "@/components/ui/badge"
 import { OrderStatus } from "@/db/schema"
 
 import { Button } from "@/components/ui/button"
-import { acceptOrder } from "./actions"
+import { acceptOrder, activateOrder, cancelOrder } from "./actions"
 import { toast } from "sonner"
-import { Check } from "lucide-react"
+import { Check, Play, X } from "lucide-react"
 
 export type PendingRental = {
   id: string
@@ -60,8 +60,13 @@ export const columns: ColumnDef<PendingRental>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.getValue("status") as OrderStatus
+      let badgeColor = "bg-gray-500"
+      
+      if (status === OrderStatus.Pending) badgeColor = "bg-yellow-500 hover:bg-yellow-600"
+      else if (status === OrderStatus.Confirmed) badgeColor = "bg-blue-500 hover:bg-blue-600"
+      
       return (
-        <Badge variant="default" className="bg-yellow-500 hover:bg-yellow-600 capitalize">
+        <Badge variant="default" className={`${badgeColor} capitalize`}>
           {status}
         </Badge>
       )
@@ -81,24 +86,66 @@ export const columns: ColumnDef<PendingRental>[] = [
   },
   {
     id: "actions",
-    header: "Accept",
+    header: "Actions",
     cell: ({ row }) => {
+      const status = row.original.status
+
       return (
-        <Button
-          size="sm"
-          className="bg-green-600 hover:bg-green-700"
-          onClick={async () => {
-            const result = await acceptOrder(row.original.id)
-            if (result.success) {
-              toast.success("Order accepted successfully")
-            } else {
-              toast.error("Failed to accept order")
-            }
-          }}
-        >
-          <Check className="w-4 h-4 mr-2" />
-          Accept
-        </Button>
+        <div className="flex items-center gap-2">
+          {status === OrderStatus.Pending && (
+            <Button
+              size="sm"
+              className="bg-green-600 hover:bg-green-700"
+              onClick={async () => {
+                const result = await acceptOrder(row.original.id)
+                if (result.success) {
+                  toast.success("Order accepted successfully")
+                } else {
+                  toast.error("Failed to accept order")
+                }
+              }}
+            >
+              <Check className="w-4 h-4 mr-2" />
+              Accept
+            </Button>
+          )}
+
+          {status === OrderStatus.Confirmed && (
+            <Button
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={async () => {
+                const result = await activateOrder(row.original.id)
+                if (result.success) {
+                  toast.success("Order activated successfully")
+                } else {
+                  toast.error("Failed to activate order")
+                }
+              }}
+            >
+              <Play className="w-4 h-4 mr-2" />
+              Activate
+            </Button>
+          )}
+
+          {(status === OrderStatus.Pending || status === OrderStatus.Confirmed) && (
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={async () => {
+                const result = await cancelOrder(row.original.id)
+                if (result.success) {
+                  toast.success("Order cancelled successfully")
+                } else {
+                  toast.error("Failed to cancel order")
+                }
+              }}
+            >
+              <X className="w-4 h-4 mr-2" />
+              Cancel
+            </Button>
+          )}
+        </div>
       )
     },
   },
