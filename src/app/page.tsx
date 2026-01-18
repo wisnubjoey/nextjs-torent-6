@@ -86,31 +86,7 @@ export default function Home() {
               </p>
 
               {/* Search Form */}
-              <div className="bg-background p-4 rounded-xl shadow-lg border grid gap-4 md:grid-cols-[1fr_1fr_auto]">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    Location
-                  </div>
-                  <Input
-                    placeholder="City, Airport, or Address"
-                    className="border-0 shadow-none px-0 focus-visible:ring-0 text-base"
-                  />
-                </div>
-                <div className="space-y-2 border-l pl-4 hidden md:block">
-                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    Date
-                  </div>
-                  <Input
-                    type="date"
-                    className="border-0 shadow-none px-0 focus-visible:ring-0 text-base"
-                  />
-                </div>
-                <Button size="lg" className="h-full w-full md:w-auto">
-                  <Search className="mr-2 h-4 w-4" /> Search Car
-                </Button>
-              </div>
+              
             </div>
           </div>
 

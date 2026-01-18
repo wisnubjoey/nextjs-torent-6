@@ -4,7 +4,7 @@ import { useCart } from "@/lib/stores/cart-store"
 import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { format } from "date-fns"
+import { format, addDays, addWeeks, addMonths, differenceInDays } from "date-fns"
 import { Trash2, ShoppingCart, Calendar, Tag } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -12,9 +12,12 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { CartItem } from "@/types/cart"
 
 export default function CartPage() {
-  const { items, removeItem, clearCart, total } = useCart()
+  const { items, removeItem, updateItem, clearCart, total } = useCart()
   const router = useRouter()
   const [isCheckingOut, setIsCheckingOut] = useState(false)
 
@@ -50,6 +53,60 @@ export default function CartPage() {
     } finally {
       setIsCheckingOut(false)
     }
+  }
+
+  const calculateEndDate = (start: Date, qty: number, typeName: string) => {
+    if (typeName.toLowerCase().includes('daily')) {
+      return addDays(start, qty)
+    } else if (typeName.toLowerCase().includes('weekly')) {
+      return addWeeks(start, qty)
+    } else if (typeName.toLowerCase().includes('monthly')) {
+      return addMonths(start, qty)
+    }
+    return addDays(start, qty) // Default
+  }
+
+  const handlePricingTypeChange = (item: CartItem, newPricingTypeId: string) => {
+    const newPrice = item.availablePrices?.find(p => p.pricingTypeId === newPricingTypeId)
+    if (!newPrice) return
+
+    const newEndDate = calculateEndDate(new Date(item.startDate), item.quantity, newPrice.name)
+    const newDays = differenceInDays(newEndDate, new Date(item.startDate))
+
+    updateItem(item.id, {
+      pricingTypeId: newPricingTypeId,
+      pricingTypeName: newPrice.name,
+      price: newPrice.price,
+      endDate: newEndDate,
+      days: newDays
+    })
+  }
+
+  const handleQuantityChange = (item: CartItem, newQuantity: number) => {
+    if (newQuantity < 1) return
+
+    const newEndDate = calculateEndDate(new Date(item.startDate), newQuantity, item.pricingTypeName)
+    const newDays = differenceInDays(newEndDate, new Date(item.startDate))
+
+    updateItem(item.id, {
+      quantity: newQuantity,
+      endDate: newEndDate,
+      days: newDays
+    })
+  }
+
+  const handleStartDateChange = (item: CartItem, newDateString: string) => {
+    const newStartDate = new Date(newDateString)
+    if (isNaN(newStartDate.getTime())) return
+
+    const newEndDate = calculateEndDate(newStartDate, item.quantity, item.pricingTypeName)
+    const newDays = differenceInDays(newEndDate, newStartDate)
+
+    updateItem(item.id, {
+      startDate: newStartDate,
+      endDate: newEndDate,
+      days: newDays
+    })
   }
 
   if (items.length === 0) {
@@ -96,12 +153,13 @@ export default function CartPage() {
                   )}
                 </div>
                 
-                <CardContent className="flex-1 p-6">
-                  <div className="flex justify-between items-start mb-2">
+                <CardContent className="flex-1 p-6 space-y-4">
+                  <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-xl font-bold">{item.product.modelName}</h3>
-                      {/* You might want to fetch brand name if not stored in product directly, 
-                          but for now we rely on what's available or stored in item.product */}
+                      <p className="text-sm text-muted-foreground">
+                        {item.days} Days Duration ({format(new Date(item.startDate), "MMM dd")} - {format(new Date(item.endDate), "MMM dd")})
+                      </p>
                     </div>
                     <Button
                       variant="ghost"
@@ -113,25 +171,55 @@ export default function CartPage() {
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mt-4">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Tag className="h-4 w-4" />
-                      <span>{item.pricingTypeName} Rate: {formatCurrency(item.price)}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Calendar className="h-4 w-4" />
-                      <span>{item.days} {item.days === 1 ? 'Day' : 'Days'}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Pricing Type Selector */}
+                    <div className="space-y-2">
+                      <Label htmlFor={`pricing-${item.id}`}>Pricing Model</Label>
+                      <select
+                        id={`pricing-${item.id}`}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={item.pricingTypeId}
+                        onChange={(e) => handlePricingTypeChange(item, e.target.value)}
+                      >
+                        {item.availablePrices?.map((price) => (
+                          <option key={price.pricingTypeId} value={price.pricingTypeId}>
+                            {price.name} ({formatCurrency(price.price)})
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
-                    <div className="col-span-1 sm:col-span-2 flex items-center gap-2 bg-muted/30 p-2 rounded text-xs">
-                      <span className="font-medium">
-                        {format(new Date(item.startDate), "MMM dd, yyyy")}
-                      </span>
-                      <span>-</span>
-                      <span className="font-medium">
-                        {format(new Date(item.endDate), "MMM dd, yyyy")}
-                      </span>
+                    {/* Start Date Picker */}
+                    <div className="space-y-2">
+                      <Label htmlFor={`date-${item.id}`}>Start Date</Label>
+                      <Input
+                        id={`date-${item.id}`}
+                        type="date"
+                        value={format(new Date(item.startDate), 'yyyy-MM-dd')}
+                        min={format(new Date(), 'yyyy-MM-dd')}
+                        onChange={(e) => handleStartDateChange(item, e.target.value)}
+                      />
+                    </div>
+
+                    {/* Quantity Input */}
+                    <div className="space-y-2">
+                      <Label htmlFor={`qty-${item.id}`}>Quantity ({item.pricingTypeName})</Label>
+                      <Input
+                        id={`qty-${item.id}`}
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(item, parseInt(e.target.value) || 1)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2 border-t mt-2">
+                    <div className="text-sm text-muted-foreground">
+                      Unit Price: {formatCurrency(item.price)} / {item.pricingTypeName}
+                    </div>
+                    <div className="text-lg font-bold">
+                      {formatCurrency(item.price * item.quantity)}
                     </div>
                   </div>
                 </CardContent>

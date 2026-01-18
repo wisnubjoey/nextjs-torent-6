@@ -51,8 +51,8 @@ export const columns: ColumnDef<PendingRental>[] = [
     cell: ({ row }) => {
       const firstItem = row.original.items[0]
       if (!firstItem) return "-"
-      const start = new Date(firstItem.startDate).toLocaleDateString()
-      const end = new Date(firstItem.endDate).toLocaleDateString()
+      const start = new Date(firstItem.startDate).toLocaleDateString('en-GB')
+      const end = new Date(firstItem.endDate).toLocaleDateString('en-GB')
       return `${start} - ${end}`
     }
   },

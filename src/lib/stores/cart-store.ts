@@ -28,6 +28,13 @@ export const useCart = create<CartState>()(
           set({ items: [...currentItems, item] });
         }
       },
+      updateItem: (itemId: string, updates: Partial<CartItem>) => {
+        set({
+          items: get().items.map((item) =>
+            item.id === itemId ? { ...item, ...updates } : item
+          ),
+        });
+      },
       removeItem: (itemId: string) => {
         set({ items: get().items.filter((i) => i.id !== itemId) });
       },
@@ -35,7 +42,7 @@ export const useCart = create<CartState>()(
         set({ items: [] });
       },
       total: () => {
-        return get().items.reduce((acc, item) => acc + item.price * item.days * item.quantity, 0);
+        return get().items.reduce((acc, item) => acc + item.price * item.quantity, 0);
       },
     }),
     {

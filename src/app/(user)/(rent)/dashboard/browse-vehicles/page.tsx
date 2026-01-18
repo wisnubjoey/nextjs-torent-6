@@ -61,6 +61,11 @@ export default function BrowseVehiclesPage() {
       startDate: startDate,
       endDate: endDate,
       days: 1,
+      availablePrices: vehicle.prices.map(p => ({
+        pricingTypeId: p.pricingTypeId,
+        name: p.name,
+        price: p.price
+      }))
     })
     
     toast.success(`${vehicle.modelName} added to cart!`)

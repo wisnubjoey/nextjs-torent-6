@@ -1,38 +1,35 @@
-# Project: NextJS Torent Rental Logic
-
+# Project: NextJS Torent Cart Enhancement
 ## Goal
-Implement vehicle availability logic to prevent double-booking of currently rented vehicles.
+Enable users to customize rental duration, start date, and pricing model (Daily/Weekly/Monthly) directly in the shopping cart.
 
 ## Vetted Dependencies
-- **date-fns** (Existing) — Robust date manipulation for checking rental periods.
-- **drizzle-orm** (Existing) — Type-safe SQL builder for querying order overlaps.
+- date-fns@^4.0.0 — Existing project dependency for robust date manipulation.
+- lucide-react@^0.400.0 — Existing project dependency for UI icons.
+- zustand@^5.0.0 — Existing state management for cart logic.
 
 ## Structure
 ```
 .
-├── src/
-│   ├── app/
-│   │   ├── (user)/(rent)/dashboard/browse-vehicles/
-│   │   │   └── page.tsx        # UI updates: Show availability status, disable booked cars
-│   │   └── api/
-│   │       └── cars/
-│   │           └── route.ts    # Backend: Inject `isAvailable` flag by checking active orders
-│   └── db/
-│       └── order-schema.ts     # DB: Add indices on startDate/endDate for performance
+├── src
+│   ├── app
+│   │   └── (user)
+│   │       └── (rent)
+│   │           └── dashboard
+│   │               ├── browse-vehicles
+│   │               │   └── page.tsx      # Update: Pass available prices to cart
+│   │               └── cart
+│   │                   └── page.tsx      # Update: Add editing controls (Date, Qty, Type)
+│   ├── lib
+│   │   └── stores
+│   │       └── cart-store.ts             # Update: Add updateItem action
+│   └── types
+│       └── cart.ts                       # Update: Add availablePrices to CartItem
 ```
 
-## Implementation Details
-1.  **Availability Logic**:
-    - A vehicle is **unavailable** if there exists an `order_item` where:
-        - `product_id` matches the vehicle.
-        - The associated `order` status is `confirmed` or `active`.
-        - The current date overlaps with `[start_date, end_date]`.
-2.  **API Response**:
-    - Extend the vehicle object with `isAvailable: boolean` and optional `availableFrom: Date`.
-
 ## Security
-- **Race Condition Prevention**: Availability must be re-checked strictly at the moment of order creation (checkout), not just during browsing.
-- **Input Sanitization**: Ensure date comparisons use server-side time to prevent client-clock manipulation.
+- **Input Validation**: Ensure `startDate` is not in the past.
+- **Type Safety**: Enforce strictly typed pricing models (Daily/Weekly/Monthly) to prevent invalid pricing logic.
+- **Sanitization**: Ensure `quantity` is a positive integer > 0 to prevent negative billing.
 
 ## Lint
 ```bash

@@ -1,7 +1,9 @@
-- [ ] Add compound index to `order_items` (product_id, start_date, end_date) for query performance
-- [ ] Update `/api/cars/route.ts` to join `orders` and `order_items` and calculate availability
-- [ ] Modify `GET` response in `route.ts` to include `isAvailable` boolean for each vehicle
-- [ ] Update frontend `Vehicle` interface in `browse-vehicles/page.tsx`
-- [ ] Add UI badge "Currently Rented" for unavailable vehicles
-- [ ] Disable "Add to Cart" button for unavailable vehicles
-- [ ] Verify logic: Ensure cancelled orders do not block availability
+- [x] Update `CartItem` interface in `src/types/cart.ts` to include `availablePrices` array
+- [x] Add `updateItem` action to `useCart` store in `src/lib/stores/cart-store.ts` for modifying existing cart items
+- [x] Refactor `handleAddToCart` in `browse-vehicles/page.tsx` to include `prices` in the payload
+- [x] Implement Pricing Type selector in `cart/page.tsx` (Daily/Weekly/Monthly)
+- [x] Implement Start Date picker in `cart/page.tsx` using native `<input type="date">`
+- [x] Implement Quantity input in `cart/page.tsx` using native `<input type="number">`
+- [x] Add logic to auto-calculate `endDate` based on `startDate` + (`quantity` * `pricingType` unit)
+- [x] Add logic to update `price` and `pricingTypeName` when pricing type changes
+- [x] Verify total price calculation reflects dynamic quantity and pricing changes
