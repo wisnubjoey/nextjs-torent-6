@@ -53,10 +53,12 @@ export default function MyRentalsPage() {
           
           // Filter logic for "My Rentals":
           // 1. Pending orders
-          // 2. Confirmed orders where at least one item's endDate is in the future
+          // 2. Confirmed orders
+          // 3. Active orders where at least one item's endDate is in the future
           const now = new Date()
           const activeOrders = data.orders.filter((order: Order) => {
             if (order.status === OrderStatus.Pending) return true
+            if (order.status === OrderStatus.Confirmed) return true
             if (order.status === OrderStatus.Active) {
               return order.items.some(item => isAfter(new Date(item.endDate), now))
             }
@@ -124,8 +126,14 @@ export default function MyRentalsPage() {
               </div>
               <div className="flex items-center gap-4">
                 <Badge 
-                  variant={order.status === OrderStatus.Active ? "default" : "secondary"}
-                  className="capitalize"
+                  variant={
+                    order.status === OrderStatus.Active ? "default" : 
+                    order.status === OrderStatus.Confirmed ? "secondary" : 
+                    "outline"
+                  }
+                  className={`capitalize ${
+                    order.status === OrderStatus.Confirmed ? "bg-blue-100 text-blue-800 hover:bg-blue-200" : ""
+                  }`}
                 >
                   {order.status}
                 </Badge>
@@ -159,6 +167,8 @@ export default function MyRentalsPage() {
                         <TableCell>
                           {order.status === OrderStatus.Pending ? (
                             <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20 border-yellow-200">Pending</Badge>
+                          ) : order.status === OrderStatus.Confirmed ? (
+                            <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-blue-200">Confirmed</Badge>
                           ) : isActive ? (
                             <Badge variant="default" className="bg-green-600 hover:bg-green-700">Currently Active</Badge>
                           ) : isUpcoming ? (

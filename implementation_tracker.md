@@ -1,7 +1,0 @@
-- [ ] Update `get-pending-rentals.ts` to include `Confirmed` orders
-- [ ] Update `actions.ts` to handle `Pending` -> `Confirmed`, `Confirmed` -> `Active`, and `Pending` -> `Cancelled`
-- [ ] Update `columns.tsx` to show dynamic buttons (Accept/Cancel for Pending, Activate for Confirmed)
-- [ ] Update `my-rentals/page.tsx` to display Confirmed orders and handle new Start Date logic
-- [ ] Verify Admin flow: Pending -> Confirmed -> Active
-- [ ] Verify Admin flow: Pending -> Cancelled
-- [ ] Verify User flow: View status changes
