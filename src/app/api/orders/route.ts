@@ -5,6 +5,7 @@ import { db } from "@/index";
 import { orders, orderItems, productPrices, OrderStatus } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
+import { updateExpiredOrders } from "@/lib/orders";
 
 const createOrderSchema = z.object({
   items: z.array(

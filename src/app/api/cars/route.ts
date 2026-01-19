@@ -1,7 +1,7 @@
 import { db } from "@/index";
 import { products, productBrands, productPrices, orders, orderItems, OrderStatus } from "@/db/schema";
 import { NextResponse } from "next/server";
-import { desc, eq, and, lte, gte, inArray } from "drizzle-orm";
+import { desc, eq, and, lte, gte, inArray, isNull } from "drizzle-orm";
 
 export async function GET() {
   try {

@@ -1,9 +1,7 @@
-- [x] Update `CartItem` interface in `src/types/cart.ts` to include `availablePrices` array
-- [x] Add `updateItem` action to `useCart` store in `src/lib/stores/cart-store.ts` for modifying existing cart items
-- [x] Refactor `handleAddToCart` in `browse-vehicles/page.tsx` to include `prices` in the payload
-- [x] Implement Pricing Type selector in `cart/page.tsx` (Daily/Weekly/Monthly)
-- [x] Implement Start Date picker in `cart/page.tsx` using native `<input type="date">`
-- [x] Implement Quantity input in `cart/page.tsx` using native `<input type="number">`
-- [x] Add logic to auto-calculate `endDate` based on `startDate` + (`quantity` * `pricingType` unit)
-- [x] Add logic to update `price` and `pricingTypeName` when pricing type changes
-- [x] Verify total price calculation reflects dynamic quantity and pricing changes
+- [ ] **Schema Update**: Add `deletedAt` column to `products` table in `src/db/product-schema.ts`
+- [ ] **Database Migration**: Generate and push changes to the database
+- [ ] **Backend Logic**: Update product deletion server action/API (`src/app/api/cars/[id]/route.ts`) to use Soft Delete (Update `deletedAt`)
+- [ ] **Backend Query**: Update product listing API (`src/app/api/cars/route.ts`) to filter out soft-deleted items
+- [ ] **Frontend Logic**: Review and verify `handleDelete` in `src/app/(admin)/admin/(management)/cars/page.tsx` to ensure smooth UX with soft delete
+- [ ] **Frontend/Query**: Update any other product listing queries (e.g., public pages) to filter out soft-deleted items
+- [ ] **Verification**: Verify product is "gone" from list but exists in database and order history

@@ -1,37 +1,32 @@
-# Project: NextJS Torent Cart Enhancement
+# Project: NextJS Torent - Soft Delete Implementation
+
 ## Goal
-Enable users to customize rental duration, start date, and pricing model (Daily/Weekly/Monthly) directly in the shopping cart.
+Implement "Soft Delete" for vehicles (products) to allow "deletion" without breaking historical order data due to foreign key constraints.
 
-## Vetted Dependencies
-- date-fns@^4.0.0 — Existing project dependency for robust date manipulation.
-- lucide-react@^0.400.0 — Existing project dependency for UI icons.
-- zustand@^5.0.0 — Existing state management for cart logic.
+## Strategy
+Instead of physically removing rows from the database, we will introduce a `deleted_at` timestamp column.
+- **Active Records:** `deleted_at` is NULL.
+- **Deleted Records:** `deleted_at` has a timestamp.
 
-## Structure
-```
-.
-├── src
-│   ├── app
-│   │   └── (user)
-│   │       └── (rent)
-│   │           └── dashboard
-│   │               ├── browse-vehicles
-│   │               │   └── page.tsx      # Update: Pass available prices to cart
-│   │               └── cart
-│   │                   └── page.tsx      # Update: Add editing controls (Date, Qty, Type)
-│   ├── lib
-│   │   └── stores
-│   │       └── cart-store.ts             # Update: Add updateItem action
-│   └── types
-│       └── cart.ts                       # Update: Add availablePrices to CartItem
-```
+## Schema Changes
+### `src/db/product-schema.ts`
+- Add `deletedAt: timestamp("deleted_at")` to the `products` table definition.
 
-## Security
-- **Input Validation**: Ensure `startDate` is not in the past.
-- **Type Safety**: Enforce strictly typed pricing models (Daily/Weekly/Monthly) to prevent invalid pricing logic.
-- **Sanitization**: Ensure `quantity` is a positive integer > 0 to prevent negative billing.
+## Application Logic Changes
+1.  **Backend (API) - `src/app/api/cars/[id]/route.ts`**:
+    -   **Delete Action:** Replace SQL `DELETE` with `UPDATE products SET deleted_at = NOW() WHERE id = ?`.
+    -   Ensure the API returns a success response indicating the item was archived/soft-deleted.
 
-## Lint
-```bash
-npm run lint
-```
+2.  **Backend (API) - `src/app/api/cars/route.ts`**:
+    -   **List Action:** Update the GET query to include `.where(isNull(products.deletedAt))` to exclude deleted items from the list.
+
+3.  **Frontend - `src/app/(admin)/admin/(management)/cars/page.tsx`**:
+    -   **Delete Logic:** The current `handleDelete` logic optimistically removes the item from the UI state (`setCars`). This is correct for soft delete.
+    -   **Enhancement:** Verify that the UI correctly handles the response. No major logic change needed if the API returns 200 OK, but we will review to ensure it feels seamless.
+
+4.  **Order History**:
+    -   No changes required. Historical orders will still reference the product ID. Since the row is not physically deleted, all joins and foreign keys remain valid.
+
+## Security & Integrity
+- Ensures Referential Integrity (Foreign Keys) remains intact.
+- Prevents accidental permanent data loss.
