@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, uuid, timestamp, doublePrecision, integer, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, timestamp, doublePrecision, integer, pgEnum, index } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 import { products, pricingTypes } from "./product-schema";
 
@@ -48,7 +48,9 @@ export const orderItems = pgTable("order_items", {
   priceSnapshot: doublePrecision("price_snapshot").notNull(),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
-});
+}, (t) => [
+  index("idx_order_items_product_dates").on(t.productId, t.startDate, t.endDate),
+]);
 
 // --- Relations ---
 

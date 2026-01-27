@@ -1,0 +1,1 @@
+CREATE INDEX "idx_order_items_product_dates" ON "order_items" USING btree ("product_id","start_date","end_date");

@@ -14,7 +14,7 @@ export const ourFileRouter = {
        * For full list of options and controls, see the FileRoute API:
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
-      maxFileSize: "4MB",
+      maxFileSize: "32MB",
       maxFileCount: 1,
     },
   })

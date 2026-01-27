@@ -46,8 +46,9 @@ export const columns: ColumnDef<HistoryRental>[] = [
     cell: ({ row }) => {
       const firstItem = row.original.items[0]
       if (!firstItem) return "-"
-      const start = new Date(firstItem.startDate).toLocaleDateString()
-      const end = new Date(firstItem.endDate).toLocaleDateString()
+      // Use consistent formatting to prevent hydration mismatch
+      const start = new Date(firstItem.startDate).toLocaleDateString('en-GB') // dd/mm/yyyy
+      const end = new Date(firstItem.endDate).toLocaleDateString('en-GB')   // dd/mm/yyyy
       return `${start} - ${end}`
     }
   },

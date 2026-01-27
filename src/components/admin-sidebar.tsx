@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Car, Settings, ChevronLeft, ChevronRight, Users, BarChart3, List, History, Clock } from 'lucide-react';
+import { LayoutDashboard, Car, Settings, ChevronLeft, ChevronRight, Users, BarChart3, List, History, Clock, Bell } from 'lucide-react';
+import { getReminders } from '@/actions/reminders';
 
 const menuGroups = [
   {
     title: 'Overview',
     items: [
       { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-      { name: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
+      { name: 'Reminders', path: '/admin/reminders', icon: Bell },
     ],
   },
   {
@@ -43,6 +44,13 @@ export default function AdminSidebar({
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
+  const [hasReminders, setHasReminders] = useState(false);
+
+  useEffect(() => {
+    getReminders().then(data => {
+      if (data.count > 0) setHasReminders(true);
+    });
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -83,7 +91,7 @@ export default function AdminSidebar({
                     <Link
                       key={item.path}
                       href={item.path}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      className={`relative flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                         isActive
                           ? 'bg-blue-50 text-blue-600 font-medium'
                           : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
@@ -91,6 +99,9 @@ export default function AdminSidebar({
                     >
                       <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-blue-600' : ''}`} />
                       {!isCollapsed && <span>{item.name}</span>}
+                      {item.name === 'Reminders' && hasReminders && (
+                        <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
+                      )}
                     </Link>
                   );
                 })}

@@ -1,0 +1,5 @@
+- [x] Create `src/actions/reminders.ts` with `getReminders` logic (24h/5h windows)
+- [x] Create `src/app/(admin)/admin/reminders/page.tsx` for admin reminder list
+- [x] Create `src/app/(user)/(rent)/dashboard/reminders/page.tsx` for user reminder list
+- [x] Update `src/components/admin-sidebar.tsx` to include 'Reminder' item and red dot logic
+- [x] Update `src/components/user-sidebar.tsx` to include 'Reminder' item and red dot logic

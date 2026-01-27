@@ -86,12 +86,10 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    // Drizzle cascade delete should handle relations if set up in DB, 
-    // but explicit delete is safer if cascades aren't reliable
-    // Schema says "onDelete: cascade" so we just delete the product.
-
+    // Soft delete: Update deletedAt timestamp instead of physical delete
     const deletedCar = await db
-      .delete(products)
+      .update(products)
+      .set({ deletedAt: new Date() })
       .where(eq(products.id, id))
       .returning();
 
@@ -99,7 +97,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }
 
-    return NextResponse.json(deletedCar[0]);
+    return NextResponse.json({ message: "Car deleted successfully" });
   } catch (error) {
     console.error("Error deleting car:", error);
     return NextResponse.json({ error: "Failed to delete car" }, { status: 500 });
