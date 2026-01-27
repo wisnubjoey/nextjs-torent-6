@@ -1,7 +1,5 @@
-- [ ] **Schema Update**: Add `deletedAt` column to `products` table in `src/db/product-schema.ts`
-- [ ] **Database Migration**: Generate and push changes to the database
-- [ ] **Backend Logic**: Update product deletion server action/API (`src/app/api/cars/[id]/route.ts`) to use Soft Delete (Update `deletedAt`)
-- [ ] **Backend Query**: Update product listing API (`src/app/api/cars/route.ts`) to filter out soft-deleted items
-- [ ] **Frontend Logic**: Review and verify `handleDelete` in `src/app/(admin)/admin/(management)/cars/page.tsx` to ensure smooth UX with soft delete
-- [ ] **Frontend/Query**: Update any other product listing queries (e.g., public pages) to filter out soft-deleted items
-- [ ] **Verification**: Verify product is "gone" from list but exists in database and order history
+- [x] Create `src/actions/reminders.ts` with `getReminders` logic (24h/5h windows)
+- [x] Create `src/app/(admin)/admin/reminders/page.tsx` for admin reminder list
+- [x] Create `src/app/(user)/(rent)/dashboard/reminders/page.tsx` for user reminder list
+- [x] Update `src/components/admin-sidebar.tsx` to include 'Reminder' item and red dot logic
+- [x] Update `src/components/user-sidebar.tsx` to include 'Reminder' item and red dot logic

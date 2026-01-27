@@ -280,11 +280,11 @@ export default function CarsPage() {
           <form onSubmit={handleSubmit} className="mt-6 space-y-6">
             
             {/* Brand Selection */}
-            <div className="space-y-2">
+            <div className="space-y-2 px-4">
               <Label htmlFor="brand">Brand</Label>
               <select
                 id="brand"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 value={formData.brandId}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, brandId: e.target.value }))
@@ -299,10 +299,11 @@ export default function CarsPage() {
               </select>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 px-4">
               <Label htmlFor="modelName">Model Name</Label>
               <Input
                 id="modelName"
+                className="h-10 px-4"
                 placeholder="e.g. Camry"
                 value={formData.modelName}
                 onChange={(e) =>
@@ -313,30 +314,38 @@ export default function CarsPage() {
             </div>
 
             {/* Pricing Inputs */}
-            <div className="space-y-4 rounded-md border p-4">
+            <div className="space-y-4 rounded-md border p-4 bg-muted/20">
               <h3 className="font-semibold text-sm">Pricing</h3>
-              {pricingTypes.map((type) => (
-                <div key={type.id} className="grid gap-2">
-                  <Label htmlFor={`price-${type.id}`}>{type.name} Price</Label>
-                  <Input
-                    id={`price-${type.id}`}
-                    type="number"
-                    placeholder="0"
-                    min="0"
-                    step="1"
-                    value={formData.prices[type.id] || ''}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        prices: { ...prev.prices, [type.id]: e.target.value },
-                      }))
-                    }
-                  />
-                </div>
-              ))}
+              <div className="grid gap-4">
+                {pricingTypes.map((type) => (
+                  <div key={type.id} className="grid gap-2">
+                    <Label htmlFor={`price-${type.id}`} className="text-xs font-medium">
+                      {type.name} Price
+                    </Label>
+                    <div className="relative">
+                      
+                      <Input
+                        id={`price-${type.id}`}
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        step="1"
+                        className="pl-10"
+                        value={formData.prices[type.id] || ''}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            prices: { ...prev.prices, [type.id]: e.target.value },
+                          }))
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 px-4">
               <Label>Car Image</Label>
               {formData.image ? (
                 <div className="relative aspect-video w-full overflow-hidden rounded-md border">
@@ -398,7 +407,7 @@ export default function CarsPage() {
             <SheetFooter>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {editingCar ? 'Save Changes' : 'Create Car'}
+                {editingCar ? 'Save Changes' : 'Add a New Car +'}
               </Button>
             </SheetFooter>
           </form>

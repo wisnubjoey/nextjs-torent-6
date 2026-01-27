@@ -224,7 +224,7 @@ export default function BrandsPage() {
             <SheetTitle>{editingBrand ? 'Edit Brand' : 'Add New Brand'}</SheetTitle>
           </SheetHeader>
           <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-            <div className="space-y-2">
+            <div className="space-y-2 px-4">
               <Label htmlFor="brandName">Brand Name</Label>
               <Input
                 id="brandName"
@@ -237,7 +237,7 @@ export default function BrandsPage() {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 px-4">
               <Label>Brand Logo</Label>
               {formData.logo ? (
                 <div className="relative aspect-square w-32 overflow-hidden rounded-md border mx-auto">

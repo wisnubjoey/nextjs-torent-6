@@ -61,22 +61,24 @@ export default function AdminDashboard() {
         </div>
 
         <div className="bg-card text-card-foreground border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-medium mb-2">System Settings</h3>
-          <p className="text-sm text-muted-foreground mb-4">Configure system settings and preferences</p>
+          <h3 className="text-lg font-medium mb-2">Vehicle Management</h3>
+          <p className="text-sm text-muted-foreground mb-4">Manage vehicle listings, categories, and specifications</p>
           <button
+            onClick={() => router.push('/admin/vehicles')}
             className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded text-sm w-full"
           >
-            Settings
+            Manage Vehicles
           </button>
         </div>
 
         <div className="bg-card text-card-foreground border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-medium mb-2">Analytics</h3>
-          <p className="text-sm text-muted-foreground mb-4">View system analytics and reports</p>
+          <h3 className="text-lg font-medium mb-2">Order Management</h3>
+          <p className="text-sm text-muted-foreground mb-4">View and manage user orders</p>
           <button
+            onClick={() => router.push('/admin/orders')}
             className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded text-sm w-full"
           >
-            View Analytics
+            Order History
           </button>
         </div>
       </div>

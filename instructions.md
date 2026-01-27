@@ -1,32 +1,36 @@
-# Project: NextJS Torent - Soft Delete Implementation
-
+# Project: Next.js Torent Reminder Feature
 ## Goal
-Implement "Soft Delete" for vehicles (products) to allow "deletion" without breaking historical order data due to foreign key constraints.
+Add a reminder system to User and Admin dashboards that triggers alerts for rentals starting or ending within 24 hours and 5 hours, displayed via a new sidebar menu item with a notification indicator (red dot).
 
-## Strategy
-Instead of physically removing rows from the database, we will introduce a `deleted_at` timestamp column.
-- **Active Records:** `deleted_at` is NULL.
-- **Deleted Records:** `deleted_at` has a timestamp.
+## Vetted Dependencies
+- date-fns@^4.1.0 — Lightweight, robust date manipulation for calculating time windows (already installed).
+- lucide-react@^0.562.0 — Consistent iconography for the new sidebar item (already installed).
 
-## Schema Changes
-### `src/db/product-schema.ts`
-- Add `deletedAt: timestamp("deleted_at")` to the `products` table definition.
+## Structure
+```
+.
+├── src
+│   ├── actions
+│   │   └── reminders.ts        # Server actions for reminder logic
+│   ├── app
+│   │   ├── (admin)
+│   │   │   └── admin
+│   │   │       └── reminders
+│   │   │           └── page.tsx # Admin reminder view
+│   │   └── (user)
+│   │       └── (rent)
+│   │           └── dashboard
+│   │               └── reminders
+│   │                   └── page.tsx # User reminder view
+│   └── components
+│       ├── admin-sidebar.tsx    # Update: Add Reminder menu + Badge
+│       └── user-sidebar.tsx     # Update: Add Reminder menu + Badge
+```
 
-## Application Logic Changes
-1.  **Backend (API) - `src/app/api/cars/[id]/route.ts`**:
-    -   **Delete Action:** Replace SQL `DELETE` with `UPDATE products SET deleted_at = NOW() WHERE id = ?`.
-    -   Ensure the API returns a success response indicating the item was archived/soft-deleted.
+## Security
+- **Authorization**: `getReminders` action must enforce role-based access control (Admin sees all/relevant, User sees only own).
+- **Data Leakage**: Ensure user queries filter strictly by `userId`.
+- **Validation**: Use strict date comparison to avoid timezone exploits.
 
-2.  **Backend (API) - `src/app/api/cars/route.ts`**:
-    -   **List Action:** Update the GET query to include `.where(isNull(products.deletedAt))` to exclude deleted items from the list.
-
-3.  **Frontend - `src/app/(admin)/admin/(management)/cars/page.tsx`**:
-    -   **Delete Logic:** The current `handleDelete` logic optimistically removes the item from the UI state (`setCars`). This is correct for soft delete.
-    -   **Enhancement:** Verify that the UI correctly handles the response. No major logic change needed if the API returns 200 OK, but we will review to ensure it feels seamless.
-
-4.  **Order History**:
-    -   No changes required. Historical orders will still reference the product ID. Since the row is not physically deleted, all joins and foreign keys remain valid.
-
-## Security & Integrity
-- Ensures Referential Integrity (Foreign Keys) remains intact.
-- Prevents accidental permanent data loss.
+## Lint
+npm run lint
